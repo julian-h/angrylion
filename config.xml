@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<angrylion>
+	<template name="Letter" desc="Creates a letter addressed to a specific person">
+		<!-- declare the folder names we want to copy later -->
+		<folder name="template_user" rename="(template_user_last)" />
+	
+		<!-- keys that are defined by the user -->
+		<key type="input" name="(template_user_name)" prompt="What is the persons name: " />	
+		<key type="input" name="(template_user_last)" prompt="What is the persons last name: " />	
+		
+		<!-- static key values -->		
+		<key type="value" value="templates/" name="(template_folder)" />
+		
+		<!-- values that depend on the user input -->
+		<switch type="input" name="gender" prompt="What gender is the person?">
+			<case name="male">
+				<key type="switch" name="(template_user_gender)" value="Mr." />
+			</case>
+			<case name="female">
+				<key type="switch" name="(template_user_gender)" value="Mrs." />
+			</case>
+		</switch>
+		
+		<!-- uuid keys -->
+		<key type="uuid" name="(template_user_id)" />
+		
+		<!-- keys that will be concatenated from other input or values -->
+		<key type="concatenate" format="Dear $((template_user_gender)) $((template_user_last))," name="(template_user_address)" />
+		
+		<!-- keys that will be the lowercase version of the format str -->
+		<key type="lowercase" format="$((template_user_name))" name="(template_user_name_lower)" />
+	</template>
+</angrylion>
