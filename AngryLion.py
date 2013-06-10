@@ -4,6 +4,7 @@
 
 from bs4 import BeautifulSoup
 
+import traceback
 import logging
 import string
 import shutil
@@ -254,11 +255,7 @@ class AngryLion():
 	def makeValues(self, key_tags):		
 		data = {}
 		for key_tag in key_tags:
-			try:
-				data[key_tag['name']] = key_tag['value']
-			except KeyError:
-				msg = "key tag: '" + key_tag['name'] + "' doesn't have an attribute 'value'"
-				self.log(msg, "ERROR")
+			data[key_tag['name']] = key_tag['value']
 			
 		return data
 		
@@ -272,20 +269,9 @@ class AngryLion():
 	def makeEscape(self, key_tags):
 		data = {}
 		for key_tag in key_tags:
-			# get the format string
-			try:
-				format_str = self.fillFormatStr(key_tag['format'])
-			except KeyError:
-				msg = "key tag: '" + key_tag['name'] + "' doesn't have an attribute 'format'"
-				self.log(msg, "ERROR")
-			
-			# now we escape the specified char
-			try:
-				data[key_tag['name']] = format_str.replace(key_tag['char'], "\\"+key_tag['char'])
-			except KeyError:
-				msg = "the key '" + key_tag['name'] + "' doesn't contain an attribute 'char'"
-				self.log(msg, "ERROR")
-		
+			format_str = self.fillFormatStr(key_tag['format'])
+			data[key_tag['name']] = format_str.replace(key_tag['char'], "\\"+key_tag['char'])
+					
 		return data
 		
 	## Method to handle a tag (or tags) from type "uppercase", this will convert the string to uppercase
@@ -298,13 +284,8 @@ class AngryLion():
 	def makeUpper(self, key_tags):
 		data = {}
 		for key_tag in key_tags:
-			# get the format string
-			try:
-				format_str = self.fillFormatStr(key_tag['format'])
-			except KeyError:
-				msg = "key tag: '" + key_tag['name'] + "' doesn't have an attribute 'format'"
-				self.log(msg, "ERROR")
-			
+			format_str = self.fillFormatStr(key_tag['format'])
+		
 			# convert the string to uppercase
 			data[key_tag['name']] = format_str.upper()
 		
@@ -320,13 +301,8 @@ class AngryLion():
 	def makeLower(self, key_tags):
 		data = {}
 		for key_tag in key_tags:
-			# get the format string
-			try:
-				format_str = self.fillFormatStr(key_tag['format'])
-			except KeyError:
-				msg = "key tag: '" + key_tag['name'] + "' doesn't have an attribute 'format'"
-				self.log(msg, "ERROR")
-			
+			format_str = self.fillFormatStr(key_tag['format'])
+		
 			# convert the string to lowercase
 			data[key_tag['name']] = format_str.lower()
 		
@@ -343,12 +319,8 @@ class AngryLion():
 		data = {}
 		# check in every key tag, if all of the dependencies (in the format string, are available)
 		for key_tag in key_tags:
-			try:
-				format_str = self.fillFormatStr(key_tag['format'])
-			except KeyError:
-				msg = "key tag: '" + key_tag['name'] + "' doesn't have an attribute 'format'"
-				self.log(msg, "ERROR")
-		
+			format_str = self.fillFormatStr(key_tag['format'])
+	
 			data[key_tag['name']] = format_str
 		
 		return data
@@ -363,11 +335,7 @@ class AngryLion():
 	def makeUUID(self, key_tags):
 		uuids = {}
 		for key_tag in key_tags:
-			try:
-				uuids[key_tag['name']] = str(uuid.uuid4())
-			except KeyError:
-				msg = "key tag: '" + key_tag['name'] + "' is not accessible"
-				self.log(msg, "ERROR")
+			uuids[key_tag['name']] = str(uuid.uuid4())
 				
 		return uuids
 		
@@ -381,17 +349,13 @@ class AngryLion():
 	def makeReplace(self, key_tags):
 		data = {}
 		for key_tag in key_tags:
-			try:
-				format_str = self.fillFormatStr(key_tag['format'])
-				format_str = format_str.replace(key_tag['match'], key_tag['replacement'])
-			except KeyError:
-				msg = "key tag: '" + key_tag['name'] + "' doesn't have attribute 'format' or 'match' or 'replacement'"
-				self.log(msg, "ERROR")
+			format_str = self.fillFormatStr(key_tag['format'])
+			format_str = format_str.replace(key_tag['match'], key_tag['replacement'])
 				
 			data[key_tag['name']] = format_str
 				
 		return data
-	
+
 	## Method to generate all other keys that are not user input
 	#
 	#  @param self The object pointer.
@@ -402,7 +366,13 @@ class AngryLion():
 		
 		# iterate over all key types and call their handler function
 		for key_type in self.key_types:
-			data_keys = self.key_types[key_type](self.getKeyTags(key_type))
+			try:
+				data_keys = self.key_types[key_type](self.getKeyTags(key_type))
+			except Exception as e:
+				msg = "Error when resolving key type: '" + key_type + "', exception: " + str(e) + "\n" + traceback.format_exc()
+				self.log(msg, "ERROR")
+
+
 			if data_keys:
 				self.keys = dict(self.keys, **data_keys)
 		
