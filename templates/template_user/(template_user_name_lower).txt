@@ -1,1 +1,1 @@
-(template_user_address)you have been assigned a personal user id: (template_user_id).We welcome you in our community.Your sincerelyJulian H
+(template_user_address)you have been assigned a personal user id: (template_user_id).We welcome you in our community.Your sincerelyJulian H(template_user_escape)

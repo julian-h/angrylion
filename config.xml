@@ -26,6 +26,7 @@
 		
 		<!-- keys that will be concatenated from other input or values -->
 		<key type="concatenate" format="Dear $((template_user_gender)) $((template_user_last))," name="(template_user_address)" />
+		<key type="replace" format="Dear $((template_user_gender)) $((template_user_last))," match=" " replacement="\ " name="(template_user_escape)" />
 		
 		<!-- keys that will be the lowercase version of the format str -->
 		<key type="lowercase" format="$((template_user_name))" name="(template_user_name_lower)" />

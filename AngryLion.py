@@ -34,7 +34,6 @@ class AngryLion():
 						  'lowercase' : getattr(self, 'makeLower'),
 						  'uppercase' : getattr(self, 'makeUpper'),
 						  'replace' : getattr(self, 'makeReplace'),
-						  'escape' : getattr(self, 'makeEscape'),
 						  'concatenate' : getattr(self, 'makeConcat')}
 		
 		# create a logger
@@ -85,7 +84,6 @@ class AngryLion():
 						
 		# now check the key types specific attributes
 		types = {'replace' : ['format', 'match', 'replacement'],
-				 'escape' : ['format', 'char'],
 				 'input' : ['prompt'],
 				 'value' : ['value'],
 				 'switch' : ['value'],
@@ -257,21 +255,6 @@ class AngryLion():
 		for key_tag in key_tags:
 			data[key_tag['name']] = key_tag['value']
 			
-		return data
-		
-	## Method to handle a tag (or tags) from type "escape", this will escape the character in the 'char' attribute
-	#
-	#  @param self The object pointer.
-	#  @param key_tags A dictionary which has the tags attribute names as the identifier
-	#
-	#  @return A dictionary with the name of the key as identiefier and the escaped string as description
-	#
-	def makeEscape(self, key_tags):
-		data = {}
-		for key_tag in key_tags:
-			format_str = self.fillFormatStr(key_tag['format'])
-			data[key_tag['name']] = format_str.replace(key_tag['char'], "\\"+key_tag['char'])
-					
 		return data
 		
 	## Method to handle a tag (or tags) from type "uppercase", this will convert the string to uppercase
